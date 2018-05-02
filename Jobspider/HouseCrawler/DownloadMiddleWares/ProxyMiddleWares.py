@@ -52,11 +52,8 @@ class ProxyMiddleware(object):
 
     def process_request(self, request, spider):
         proxy_status = b'True'
-        if proxy_status == b'True':
-            if 'anjuke' in request.url:
-                proxy = r.srandmember(self._proxy_pool_map[link_env]['middle'])
-            else:
-                proxy = r.srandmember(self._proxy_pool_map[link_env]['middle'])
+        if proxy_status == b'True' and 'common' not in request.url:
+            proxy = r.srandmember(self._proxy_pool_map[link_env]['high'])
             if proxy:
                 proxy = proxy.decode('utf-8')
                 request.meta['proxy'] = "http://%s" % (proxy)

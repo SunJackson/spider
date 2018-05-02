@@ -31,7 +31,7 @@ BOT_NAME = 'HouseCrawler'
 SPIDER_MODULES = ['HouseCrawler.Spiders']
 NEWSPIDER_MODULE = 'HouseCrawler.Spiders'
 COMMANDS_MODULE = 'HouseCrawler.Commands'
-LOG_LEVEL = 'INFO'
+LOG_LEVEL = 'DEBUG'
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = False
@@ -82,7 +82,7 @@ REDIRECT_ENABLED = False
 
 COOKIES_DEBUG = False
 
-DOWNLOAD_DELAY = 0.1
+DOWNLOAD_DELAY = 1
 DOWNLOAD_TIMEOUT = 60
 RANDOMIZE_DOWNLOAD_DELAY = True
 # Enable or disable extensions
