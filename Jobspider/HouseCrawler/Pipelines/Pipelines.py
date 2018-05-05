@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 class Pipeline(object):
     def __init__(self):
-        engine = create_engine('mysql+pymysql://root:password@120.78.189.152:3306/job_data?charset=utf8')
+        engine = create_engine('mysql+pymysql://root:password@x.x.x.x:x/job_data?charset=utf8')
         JobData.metadata.create_all(engine)
         self.Session = sessionmaker(bind=engine)
 
