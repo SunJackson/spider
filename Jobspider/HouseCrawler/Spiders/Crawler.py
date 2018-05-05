@@ -99,7 +99,6 @@ class DefaultcrawlerSpider(RedisSpider):
                 else:
                     req = Request(url=data['source_url'],
                                   method=data['method'],
-                                  body=data['body'],
                                   dont_filter=True,
                                   meta=data['meta'])
             else:
@@ -117,5 +116,4 @@ class DefaultcrawlerSpider(RedisSpider):
             self.logger.debug("Read %s requests from '%s'", found, self.redis_key)
 
     def parse(self, response):
-
         pass

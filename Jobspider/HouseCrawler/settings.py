@@ -14,11 +14,7 @@ import django
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(os.path.join(os.path.dirname(BASE_DIR), 'HouseCrawler'))
-sys.path.append(os.path.join(os.path.dirname(BASE_DIR), 'HouseAdmin'))
 sys.path.append(os.path.dirname(BASE_DIR))
-
-os.environ['DJANGO_SETTINGS_MODULE'] = 'HouseAdmin.HouseAdmin.settings'
-django.setup()
 
 # PROXY_REDIS = dj_settings.SCRAPY_BASE_REDIS_CLIENT
 # PROXYFLAG_REDIS = dj_settings.SCRAPY_BASE_REDIS_CLIENT
@@ -63,6 +59,7 @@ DEFAULT_REQUEST_HEADERS = {
 SPIDER_MIDDLEWARES = {
     'scrapy.spidermiddlewares.httperror.HttpErrorMiddleware': 100,
     'HouseCrawler.SpiderMiddleWares.SpiderMiddleWares.SpiderMiddlerGetJsonDate': 101,
+    'HouseCrawler.SpiderMiddleWares.SpiderMiddleWares.SpiderMiddlerJobDetail':102
 }
 
 # Enable or disable downloader middlewares
@@ -70,19 +67,19 @@ SPIDER_MIDDLEWARES = {
 DOWNLOADER_MIDDLEWARES = {
     'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': 110,
     'HouseCrawler.DownloadMiddleWares.ProxyMiddleWares.RandomUserAgent': 1,
-    # 'HouseCrawler.DownloadMiddleWares.ProxyMiddleWares.ProxyMiddleware': 100,
+    'HouseCrawler.DownloadMiddleWares.ProxyMiddleWares.ProxyMiddleware': 100,
     'HouseCrawler.DownloadMiddleWares.RetryMiddleWares.RetryMiddleware': 120,
 }
 
 RETRY_ENABLED = True
 RETRY_TIMES = 10
-RETRY_HTTP_CODES = [405,500,403,404,501,502,503,504,408,411,413,302,301,407,303,304,305,306,307,400]
+RETRY_HTTP_CODES = [405,500,502,403,404,501,502,503,504,408,411,413,302,301,407,303,304,305,306,307,400]
 REDIRECT_ENABLED = False
 
 
 COOKIES_DEBUG = False
 
-DOWNLOAD_DELAY = 1
+DOWNLOAD_DELAY = 0.1
 DOWNLOAD_TIMEOUT = 60
 RANDOMIZE_DOWNLOAD_DELAY = True
 # Enable or disable extensions
@@ -95,7 +92,7 @@ EXTENSIONS = {
 # Configure item pipelines
 # See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-    # 'HouseCrawler.Pipelines.PipelinesWuxi.Pipeline': 300,
+    'HouseCrawler.Pipelines.Pipelines.Pipeline': 300,
 }
 REACTOR_THREADPOOL_MAXSIZE = 20
 AUTOTHROTTLE_TARGET_CONCURRENCY = 2.0
@@ -142,7 +139,7 @@ USER_AGENTS = ["Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101 Firefox/
                "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/535.24 (KHTML, like Gecko) Chrome/19.0.1055.1 Safari/535.24"
                ]
 
-REDIS_HOST = '10.30.1.18'
+REDIS_HOST = '127.0.0.1'
 REDIS_PORT = 6379
-Redis_key = 'Crawlers:start_urls'
+REDIS_START_URLS_KEY = 'BossSpider'
 REDIS_START_URLS_AS_SET = True

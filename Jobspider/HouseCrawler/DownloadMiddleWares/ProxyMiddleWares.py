@@ -10,11 +10,6 @@ if sys.version_info.major >= 3:
     import urllib.parse as urlparse
 else:
     import urlparse
-
-# if "192.168.6" in LOCALIP or "10.30.1" in LOCALIP:
-#     link_env = 'master'
-# else:
-#     link_env = 'slave'
 link_env = 'slave'
 
 r = Redis(host='10.30.1.20', port=6379)
@@ -53,7 +48,7 @@ class ProxyMiddleware(object):
     def process_request(self, request, spider):
         proxy_status = b'True'
         if proxy_status == b'True' and 'common' not in request.url:
-            proxy = r.srandmember(self._proxy_pool_map[link_env]['high'])
+            proxy = r.srandmember(self._proxy_pool_map[link_env]['low'])
             if proxy:
                 proxy = proxy.decode('utf-8')
                 request.meta['proxy'] = "http://%s" % (proxy)

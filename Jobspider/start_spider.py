@@ -3,7 +3,7 @@
 from scrapy import cmdline
 
 def multspider():
-    cmdl = "scrapy crawlall Crawler 1 Crawler:start_urls:Default"
+    cmdl = "scrapy crawlall Crawler 100"
     cmdline.execute(cmdl.split(' '))
 
 
