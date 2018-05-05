@@ -7,7 +7,7 @@ DeclarativeBase = declarative_base()
 
 
 class JobData(DeclarativeBase):
-    __tablename__ = "JobData1"
+    __tablename__ = "JobData"
     id = Column(Integer, primary_key=True, nullable=False, autoincrement=True, index=True)
     RecordTime = Column(String(255), default=datetime.datetime.now())
     JobUUID = Column(String(255))

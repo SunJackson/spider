@@ -106,7 +106,7 @@ class SpiderMiddlerGetJsonDate(object):
                                 'CityName': name
                             }}
                         base_json = json.dumps(city_base, sort_keys=True)
-                        self.r.sadd('BossSpider', base_json)
+                        self.r.sadd(self.settings.get('REDIS_START_URLS_KEY'), base_json)
 
         if response.meta.get('PageType') == 'CityJobs':
             logging.debug("CityJobs")
@@ -158,7 +158,9 @@ class SpiderMiddlerGetJsonDate(object):
                 DataItem['JobUUID'] = uuid.uuid3(uuid.NAMESPACE_DNS,
                                                  job_title +
                                                  region +
-                                                 CityCode
+                                                 CityCode +
+                                                 data_jid +
+                                                 data_lid
                                                  ).hex
 
                 headers = {
@@ -203,7 +205,7 @@ class SpiderMiddlerGetJsonDate(object):
                         'PageType': 'CityJobs',
                     }}
                 base_json = json.dumps(job_base, sort_keys=True)
-                self.r.sadd('BossSpider', base_json)
+                self.r.sadd(self.settings.get('REDIS_START_URLS_KEY'), base_json)
         return result
 
     def process_spider_exception(self, response, exception, spider):
