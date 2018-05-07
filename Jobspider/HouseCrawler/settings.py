@@ -10,7 +10,6 @@
 #     http://scrapy.readthedocs.org/en/latest/topics/spider-middleware.html
 import os
 import sys
-import django
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(os.path.join(os.path.dirname(BASE_DIR), 'HouseCrawler'))
@@ -31,7 +30,7 @@ LOG_LEVEL = 'DEBUG'
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = False
-
+DOWNLOAD_FAIL_ON_DATALOSS = False
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 CONCURRENT_REQUESTS = 8
 

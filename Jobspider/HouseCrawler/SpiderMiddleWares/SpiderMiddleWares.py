@@ -11,7 +11,7 @@ import copy
 from redis import Redis
 from scrapy import Request
 from scrapy import Selector
-from Items.Items import JobBaseItem
+from HouseCrawler.Items.Items import JobBaseItem
 
 if sys.version_info.major >= 3:
     import urllib.parse as urlparse
@@ -32,7 +32,7 @@ def clean_data_str(string):
                     }
         for r in fix_data:
             result_data = result_data.strip().replace(r, fix_data[r])
-    return result_data
+    return str(result_data)
 
 
 class SpiderMiddlerGetJsonDate(object):
@@ -41,10 +41,7 @@ class SpiderMiddlerGetJsonDate(object):
     # passed objects.
     def __init__(self, settings):
         self.settings = settings
-        self.r = Redis(host='127.0.0.1', port='6379')
-        self.year = str(date.today().year)
-        self.month = str(date.today().month)
-        self.day = str(date.today().day)
+        self.r = Redis(host=settings.get('REDIS_HOST'), port='6379')
 
     @classmethod
     def from_crawler(cls, crawler):
@@ -53,15 +50,21 @@ class SpiderMiddlerGetJsonDate(object):
 
     def process_spider_output(self, response, result, spider):
         def release_time_clean(data):
-            if data == '':
+            if not data:
                 return data
             else:
+                data = data.replace('发布于', '')
                 if ':' in data:
-                    datatime = datetime.date.today().strftime("%Y-%m-%d ") + data
+                    datatime = datetime.date.today().strftime("%Y年%m月%d日") + data
                 elif '月' in data:
-                    datatime = self.year + '-' + data.replace('月', '-').replace('日', ' ') + '12:00'
+                    now_date = datetime.datetime.now().strftime("%m月%d日")
+                    year = date.today().year
+                    if data > now_date:
+                        datatime = str(year-1) + '年' + data + '12点00分'
+                    else:
+                        datatime = str(year) + '年' + data + '12点00分'
                 elif '昨天' in data:
-                    datatime = (datetime.date.today() + datetime.timedelta(days=-1)).strftime("%Y-%m-%d %H:%M")
+                    datatime = (datetime.date.today() + datetime.timedelta(days=-1)).strftime("%Y年%m月%d日%H时%M分")
                 return datatime
 
         result = list(result)
@@ -88,25 +91,26 @@ class SpiderMiddlerGetJsonDate(object):
                     for subLevelModelList in cityList.get('subLevelModelList', []):
                         code = subLevelModelList.get('code', '')
                         name = subLevelModelList.get('name', '')
-                        cityurl = 'https://www.zhipin.com/job_detail/?query=&scity={}&industry=&position='.format(code)
-                        print(cityurl)
-                        # result.append(Request(url=cityurl,
-                        #                       headers=headers,
-                        #                       method='GET',
-                        #                       meta={
-                        #                           'PageType': 'CityJobs',
-                        #                       }))
-                        city_base = {
-                            'source_url': cityurl,
-                            'headers': headers,
-                            'method': 'GET',
-                            'meta': {
-                                'PageType': 'CityJobs',
-                                'CityCode': code,
-                                'CityName': name
-                            }}
-                        base_json = json.dumps(city_base, sort_keys=True)
-                        self.r.sadd(self.settings.get('REDIS_START_URLS_KEY'), base_json)
+                        if name and name:
+                            cityurl = 'https://www.zhipin.com/job_detail/?query=&scity={}&industry=&position='.format(code)
+                            print(cityurl)
+                            # result.append(Request(url=cityurl,
+                            #                       headers=headers,
+                            #                       method='GET',
+                            #                       meta={
+                            #                           'PageType': 'CityJobs',
+                            #                       }))
+                            city_base = {
+                                'source_url': cityurl,
+                                'headers': headers,
+                                'method': 'GET',
+                                'meta': {
+                                    'PageType': 'CityJobs',
+                                    'CityCode': code,
+                                    'CityName': name
+                                }}
+                            base_json = json.dumps(city_base, sort_keys=True)
+                            self.r.sadd(self.settings.get('REDIS_START_URLS_KEY'), base_json)
 
         if response.meta.get('PageType') == 'CityJobs':
             logging.debug("CityJobs")
@@ -146,7 +150,7 @@ class SpiderMiddlerGetJsonDate(object):
                 DataItem['Publisher'] = publisher
                 publisher_position = jobdata.xpath('./div/div[3]/h3/text()[2]').extract_first()
                 DataItem['PublisherPosition'] = publisher_position
-                release_time = jobdata.xpath('./div/div[3]/p/text()').extract_first().replace('发布于', '')
+                release_time = jobdata.xpath('./div/div[3]/p/text()').extract_first()
                 DataItem['ReleaseTime'] = release_time_clean(release_time)
                 ka = jobdata.xpath('./div/div[1]/h3/a/@ka').extract_first()
                 DataItem['Ka'] = ka
@@ -159,8 +163,7 @@ class SpiderMiddlerGetJsonDate(object):
                                                  job_title +
                                                  region +
                                                  CityCode +
-                                                 data_jid +
-                                                 data_lid
+                                                 company
                                                  ).hex
 
                 headers = {

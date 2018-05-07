@@ -6,7 +6,7 @@ from scrapy_redis import connection
 from scrapy import signals
 
 
-DEFAULT_START_URLS_BATCH_SIZE = 16
+DEFAULT_START_URLS_BATCH_SIZE = 4
 DEFAULT_START_URLS_KEY = '%(name)s:start_urls'
 
 

@@ -2,18 +2,18 @@
 #!/usr/bin/python
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
-import datetime
+
 DeclarativeBase = declarative_base()
 
 
 class JobData(DeclarativeBase):
     __tablename__ = "JobData"
     id = Column(Integer, primary_key=True, nullable=False, autoincrement=True, index=True)
-    RecordTime = Column(String(255), default=datetime.datetime.now())
-    JobUUID = Column(String(255))
-    CityName = Column(String(255))
+    RecordTime = Column(String(255), index=True)
+    JobUUID = Column(String(255), index=True)
+    CityName = Column(String(255), index=True)
     CityCode = Column(String(255))
-    JobTitle = Column(String(255))
+    JobTitle = Column(String(255), index=True)
     Pay = Column(String(255))
     Region = Column(String(255))
     WorkYears = Column(String(255))
