@@ -93,9 +93,6 @@ class ResidentialArea(models.Model):
             ]),
         ]
 
-    def __repr__(self):
-        return "{}".format(self.__class__.__name__)
-
 
 class RAPicture(models.Model):
     TID = models.BigAutoField(primary_key=True)

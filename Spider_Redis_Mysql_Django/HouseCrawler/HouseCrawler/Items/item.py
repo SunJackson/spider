@@ -5,40 +5,6 @@ import logging
 import time
 from scrapy.loader.processors import MapCompose, TakeFirst
 
-
-def CheckResidentialAreaItem(item):
-    GroundMonthlyRent = item.get('GroundMonthlyRent', '')
-
-    item['GroundMonthlyRent'] = float(GroundMonthlyRent) if GroundMonthlyRent else None
-
-    UndergroundMonthlyRent = item.get('UndergroundMonthlyRent', '')
-
-    item['UndergroundMonthlyRent'] = float(UndergroundMonthlyRent) if UndergroundMonthlyRent else None
-
-    ManagementFees = item.get('ManagementFees', '')
-    item['ManagementFees'] = float(ManagementFees.replace('元/平米·月', '')) if ManagementFees else None
-
-    GreeningRate = item.get('GreeningRate', '')
-    item['GreeningRate'] = float(GreeningRate) / 100 if GreeningRate else None
-
-    RoomRate = item.get('RoomRate', '')
-    item['RoomRate'] = float(RoomRate) if RoomRate else None
-
-    FloorAreaRatio = item.get('FloorAreaRatio', '')
-    item['FloorAreaRatio'] = float(FloorAreaRatio) if FloorAreaRatio else None
-
-    SellDate = item.get('SellDate', '')
-    item['SellDate'] = SellDate if SellDate else None
-
-    CompletionDate = item.get('CompletionDate', '')
-    item['CompletionDate'] = CompletionDate if CompletionDate else None
-
-    HouseBuildingCount = item.get('HouseBuildingCount', '')
-    item['HouseBuildingCount'] = HouseBuildingCount.replace('栋', '') if HouseBuildingCount else None
-
-    return item
-
-
 def is_valid_date(str):
     '''判断是否是一个有效的日期字符串'''
     try:
@@ -64,7 +30,6 @@ def is_valid_float(str):
         return result
     except:
         return None
-
 
 
 class ResidentialAreaItem(scrapy.Item):
